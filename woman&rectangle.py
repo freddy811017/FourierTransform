@@ -1,0 +1,62 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+img = cv2.imread('D:\\Freddy\\vision\\mp2\\woman.png',0)
+img2 = cv2.imread('D:\\Freddy\\vision\\mp2\\rectangle.png',0)
+f = np.fft.fft2(img)
+g = np.fft.fft2(img2)
+fshift = np.fft.fftshift(f)
+gshift = np.fft.fftshift(g)
+woman_m = np.abs(fshift)
+woman_p = np.angle(fshift)
+rectangle_m = np.abs(gshift)
+rectangle_p = np.angle(gshift)
+
+img_new1_f = np.zeros(img.shape,dtype=complex) 
+img1_real = woman_m*np.cos(rectangle_p) 
+img1_imag = woman_m*np.sin(rectangle_p) 
+img_new1_f.real = np.array(img1_real) 
+img_new1_f.imag = np.array(img1_imag) 
+f3shift = np.fft.ifftshift(img_new1_f) 
+img_new1 = np.fft.ifft2(f3shift)
+
+img_new1 = np.abs(img_new1)
+
+img_new1 = (img_new1-np.amin(img_new1))/(np.amax(img_new1)-np.amin(img_new1))
+plt.subplot(244),plt.imshow(img_new1,'gray'),plt.title('woman_m&rectangle_p')
+plt.xticks([]),plt.yticks([])
+
+
+img_new2_f = np.zeros(img2.shape,dtype=complex) 
+img2_real = rectangle_m*np.cos(woman_p) 
+img2_imag = rectangle_m*np.sin(woman_p) 
+img_new2_f.real = np.array(img2_real) 
+img_new2_f.imag = np.array(img2_imag) 
+f4shift = np.fft.ifftshift(img_new2_f) 
+img_new2 = np.fft.ifft2(f4shift)
+
+img_new2 = np.abs(img_new2)
+
+img_new2 = (img_new2-np.amin(img_new2))/(np.amax(img_new2)-np.amin(img_new2))
+plt.subplot(248),plt.imshow(img_new2,'gray'),plt.title('woman_p&rectangle_m')
+plt.xticks([]),plt.yticks([])
+
+
+
+
+
+plt.subplot(241),plt.imshow(img, cmap = 'gray')
+plt.title('Woman'), plt.xticks([]), plt.yticks([])
+plt.subplot(242),plt.imshow(woman_m, cmap = 'gray')
+plt.title('Woman Magnitude'), plt.xticks([]), plt.yticks([])
+plt.subplot(243),plt.imshow(woman_p, cmap = 'gray')
+plt.title('Woman Phase'), plt.xticks([]), plt.yticks([])
+
+plt.subplot(245),plt.imshow(img2, cmap = 'gray')
+plt.title('Rectangle'), plt.xticks([]), plt.yticks([])
+plt.subplot(246),plt.imshow(rectangle_m, cmap = 'gray')
+plt.title('Rectangle Magnitude'), plt.xticks([]), plt.yticks([])
+plt.subplot(247),plt.imshow(rectangle_p, cmap = 'gray')
+plt.title('Rectangle Phase'), plt.xticks([]), plt.yticks([])
+plt.show()
